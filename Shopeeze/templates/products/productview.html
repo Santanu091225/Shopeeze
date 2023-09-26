@@ -1,0 +1,376 @@
+{% extends "base/base.html" %}
+
+
+{% block extra_links %}
+
+<style>
+    .truncate {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        /* Set the number of lines you want to show (e.g., 2) */
+        -webkit-line-clamp: 2;
+        white-space: normal;
+    }
+
+    .read-more {
+        cursor: pointer;
+        color: blue;
+    }
+</style>
+
+<!-- swiper css -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+
+{% endblock %}
+
+
+{% block title %}{{product.product_name}}{% endblock %}
+
+{% block main_content %}
+
+
+<main class="pt-16 md:pt-20 select-text">
+    <div id="main_product" class="md:flex md:mt-10 md:gap-3">
+        <section id="img_sec" class="group md:w-80 md:pl-12 lg:w-[60vh] relative">
+            <button id="expandBtn" title="expand" type="button" class="absolute right-2 top-2 z-[50] text-lg rounded-full bg-slate-100 w-8 h-8 lg:hidden flex justify-center items-center text-slate-600 hover:text-black duration-300 ease-in-out transition lg:group-hover:flex">
+                <i class='bx bx-expand'></i>
+            </button>
+            <div class="swiper myswiper1">
+                <div class="swiper-wrapper">
+                    {% for image in product.product_images.all %}
+                    <div class="swiper-slide pb-8 cursor-pointer">
+                        <img src="/media/{{image.product_image}}" alt="" class="w-full h-72 lg:h-[50vh] object-contain bg-slate-200">
+                    </div>
+
+                    {% endfor %}
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </section>
+        
+        <section id="fullScreenView" class="bg-black bg-opacity-60 fixed top-0 text-9xl z-50 w-full h-full select-none hidden">
+            <button id="closeBtn" type="reset" title="close" class="text-5xl z-[88] text-slate-500 absolute right-0">
+                <i class='bx bx-x'></i>
+            </button>
+            <div class="swiper myswiper2">
+                <div class="swiper-wrapper">
+                    {% for image in product.product_images.all %}
+                    <div class="swiper-slide">
+                        <img src="/media/{{image.product_image}}" alt="" class="object-contain bg-slate-200 w-full h-[100vh]">
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </section>
+
+        <section id="details" class="px-5">
+            <p class="font-semibold text-sm text-slate-400">{{product.brand}}</p>
+
+            <p class="font-semibold text-xl">{{product.product_name}}</p>
+
+            <div id="price" class="flex items-center gap-2 mt-2">
+                {% if product.discount_price %}
+                <div class="font-semibold">
+                    <span>&#8377;</span>
+                    <span>{{ product.discount_price }}</span>
+                </div>
+                <div class="line-through text-slate-400 text-sm ">
+                    <span>&#8377;</span>
+                    <span>{{ product.actual_price }}</span>
+                </div>
+                {% else %}
+                <div>
+                    <span>&#8377;</span>
+                    <span>{{ product.actual_price }}</span>
+                </div>
+                {% endif %}
+                <div>
+                    <span class="text-green-500 text-sm ml-5 flex items-center justify-center">
+                        <i class='bx bxs-offer'></i>
+                        {{ product.discount_percentage }}% off
+                    </span>
+                </div>
+            </div>
+
+
+            <div id="color_variant" class="font-semibold text-sm mt-5 flex">
+                <p class="w-28">Colour:</p>
+                <p class="capitalize text-slate-500">{{ product.color_variant }}</p>
+            </div>
+
+
+            <form method="POST" id="select_size" class="font-semibold text-sm mt-3 flex items-center">
+                {% csrf_token %}
+                <p class="w-28">Size:</p>
+                {% for size_variant in size_variants %}
+
+                <label for="{{size_variant.size_name}}"
+                    class="capitalize flex flex-wrap items-center justify-center mr-5 text-lg gap-0.5">
+                    <input type="radio" required id="{{size_variant.size_name}}" name="selected_size"
+                        value="{{ size_variant.size_id }}" class="text-indigo-400">
+                    <span class="text-slate-500">{{size_variant.size_name}}</span>
+                </label>
+
+                {% endfor %}
+            </form>
+
+            <div id="category" class="font-semibold text-sm mt-3 flex">
+                <p class="w-28">Category:</p>
+                <p class="capitalize text-slate-500">{{ product.category }}</p>
+            </div>
+
+            <div id="fabric" class="font-semibold text-sm mt-3 flex">
+                <p class="w-28">Fabric:</p>
+                <p class="capitalize text-slate-500">{{ product.fabric }}</p>
+            </div>
+
+            <div id="description" class="truncate mt-5 text-xs lg:text-sm lg:w-[90vh]">
+                <p class="text-justify">
+                    <span class="font-bold">Description: </span>
+                    {{product.product_description}}
+                </p>
+            </div>
+            <span id="readMore" class="read-more text-xs text-blue-500 cursor-pointer" onclick="toggleDescription()">
+                ...more
+            </span>
+
+            <div id="buttons" class="mt-5 flex gap-3 lg:w-[60vh]">
+                <button title="wishlist this product" type="submit"
+                    class="border-2 border-blue-400 w-full py-2 capitalize rounded-md text-xl font-semibold flex justify-center items-center gap-2 text-slate-400 bg-gray-50 shadow-md hover:scale-105 ease-in duration-150 hover:shadow-lg">
+                    <i class='bx bxs-heart'></i>
+                    <span class="text-slate-700">wishlist</span>
+                </button>
+
+                <button title="cart this product" type="submit"
+                    class="bg-blue-400 w-full py-2.5 rounded-md text-xl font-semibold flex justify-center items-center gap-2 text-white shadow-md hover:scale-105 ease-in duration-150 hover:shadow-lg">
+                    <i class='bx bx-cart'></i>
+                    <span>Add to Cart</span>
+                </button>
+            </div>
+        </section>
+    </div>
+    <hr class="border-t border-slate-400 mt-8">
+    <section id="similar_products" class="px-5 mt-5">
+        <p class="font-semibold text-slate-500 text-lg">Similar Products:</pclas>
+    </section>
+</main>
+<!-- <section class="mt-20 text-[#023047] md:py-10">
+    <div class="px-8 lg:px-20 flex flex-col lg:flex-row max-w-3xl lg:max-w-none lg:gap-14">
+        <div class="flex items-center md:items-start flex-col space-y-5 md:flex-row md:gap-14 lg:gap-5">
+                <div id="big_img"
+                    class="flex justify-center md:order-2 order-1 w-full max-w-sm md:w-[150rem] md:h-[300px] bg-slate-200" style="@media (min-width: 786px) {
+                        height: 300px;
+                    }">
+                    <img src="/media/{{product.product_images.first.product_image}}" alt="{{product.product_name}}"
+                        class="cursor-zoom-in object-contain">
+                </div>
+
+                <div class="flex md:order-1 order-2 md:flex-col w-14 h-14">
+                    {% for image in product.product_images.all %}
+
+                    <img src="/media/{{image.product_image}}" alt=""
+                        class="w-full h-full cursor-pointer hover:ring-2 duration-150 ease-in-out object-contain bg-slate-200 {%if forloop.first %} ring-2 {% endif %}">
+
+                    {% endfor %}
+                </div>
+            </div>
+        <div id="wrapper" class="flex justify-center -mx-8 -mt-3 w-full">
+            <div class="">
+                <div id="big_img" class="">
+                    <img src="/media/{{product.product_images.first.product_image}}" alt="" class="object-contain w-full md:w-" style="height: 30rem; background-color: black;">
+                </div>
+
+                <div id="img_tray" class="w-10">
+                    {% for image in product.product_images.all %}
+                    <img src="/media/{{image.product_image}}" alt="">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="order-2 md:mt-10 lg:mt-0 w-full flex flex-col gap-3" style="margin-top: 15px;">
+            <div>
+                <h3 class="font-semibold text-slate-400">{{product.brand}}</h3>
+                <h2 class="font-bold text-3xl mb-4">{{product.product_name}}</h2>
+                <div id="description" class="truncate">
+                    <p class="text-justify">{{product.product_description}}</p>
+                </div>
+                <span id="readMore" class="read-more font-bold text-blue-500 cursor-pointer"
+                    onclick="toggleDescription()">...more</span>
+            </div>
+            <div class="text-xl font-semibold flex items-center gap-3">
+                <span class="">Price:</span>
+                {% if product.discount_price %}
+                <div>
+                    <span>&#8377;</span>
+                    <span>{{ product.discount_price }}</span>
+                </div>
+                <div class="line-through text-slate-400 text-sm ">
+                    <span>&#8377;</span>
+                    <span>{{ product.actual_price }}</span>
+                </div>
+                {% else %}
+                <div>
+                    <span>&#8377;</span>
+                    <span>{{ product.actual_price }}</span>
+                </div>
+                {% endif %}
+                <div>
+                    <span class="text-green-500 text-base ml-5 flex items-center justify-center "><i
+                            class='bx bxs-offer'></i>
+                        {{ product.discount_percentage }}% off</span>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <span class="font-semibold text-gray-500">Color:</span>
+                <div class="flex items-center gap-7" style="margin-left: 5rem;">
+                    <span class="text-lg font-semibold">{{ product.color_variant }}</span>
+                </div>
+            </div>
+            <div class="flex">
+                <span class="font-semibold text-gray-500">Size:</span>
+                <div class="flex items-center flex-wrap" style="margin-left: 5.5rem; column-gap: 1rem; row-gap: .5rem;">
+                    {% for size in product.size_variant.all %}
+                    <label for="" class="flex items-center gap-1">
+                        <input type="radio" name="size" id="{{size.size_name}}" class="h-5 w-5" {%if forloop.first%}
+                            checked {%endif%}>
+                        <span class="font-semibold text-lg">{{size.size_name}}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="flex items-center ">
+                <span class="font-semibold text-gray-500">Quantity:</span>
+                <div class="flex justify-center items-center" style="margin-left: 3.5rem;">
+                    <button id="decreaseBtn"
+                        class="w-10 h-10 text-lg flex items-center justify-center bg-blue-500 rounded-s text-white">
+                        <i class='bx bx-minus'></i>
+                    </button>
+                    <input type="tel" id="quantityInput"
+                        class="border-y-4 border-blue-500 outline-blue-400 w-12 h-10 text-center borde" value="1">
+                    <button id="increaseBtn"
+                        class="w-10 h-10 text-lg flex items-center justify-center bg-blue-500 rounded-e text-white">
+                        <i class='bx bx-plus'></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex w-full gap-5" style="margin-top: 25px;">
+                <button
+                    class="rounded bg-blue-500 text-white w-full md:w-1/2 lg:w-full lg:max-w-[24rem] py-3 font-semibold text-xl flex justify-center items-center hover:bg-opacity-90 duration-150 ease-in-out shadow-md hover:scale-95 "><i
+                        class='bx bx-cart'></i> Add to Cart</button>
+                <button
+                    class="w-20 border-2 border-blue-400 text-gray-400 rounded text-2xl hover:bg-orange-400 hover:border-orange-400 hover:text-white hover:shadow ease-in duration-150 hover:scale-95"><i class='bx bxs-heart'></i></button>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<footer>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+</footer>
+
+<script>
+    const expandBtn = document.getElementById('expandBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    const fullScreenView = document.getElementById('fullScreenView');
+
+
+    expandBtn.addEventListener('click', ()=>{
+        fullScreenView.classList.remove('hidden');
+    });
+
+    closeBtn.addEventListener('click', ()=>{
+        fullScreenView.classList.add('hidden');
+    });
+
+
+    function toggleDescription() {
+        const description = document.getElementById('description');
+        const readMore = document.getElementById('readMore');
+
+        if (description.classList.contains('truncate')) {
+            description.classList.remove('truncate');
+            readMore.textContent = '';
+        }
+    }
+
+
+    // const decreaseBtn = document.getElementById('decreaseBtn');
+    // const increaseBtn = document.getElementById('increaseBtn');
+    // const quantityInput = document.getElementById('quantityInput');
+
+    // increaseBtn.addEventListener('click', () => {
+    //     let currentValue = parseInt(quantityInput.value);
+    //     if (currentValue < 5) {
+    //         quantityInput.value = ++currentValue;
+    //         decreaseBtn.disabled = false;
+    //         decreaseBtn.classList.remove('opacity-50', 'pointer-events-none');
+    //     }
+    //     if (currentValue === 5) {
+    //         increaseBtn.classList.add('opacity-50', 'pointer-events-none');
+    //     }
+    // });
+
+    // decreaseBtn.addEventListener('click', () => {
+    //     let currentValue = parseInt(quantityInput.value);
+    //     if (currentValue > 1) {
+    //         quantityInput.value = --currentValue;
+    //         increaseBtn.classList.remove('opacity-50', 'pointer-events-none');
+    //     }
+    //     if (currentValue === 1) {
+    //         decreaseBtn.disabled = true;
+    //         decreaseBtn.classList.add('opacity-50', 'pointer-events-none');
+    //     }
+    // });
+
+</script>
+
+<!-- swiper js -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<!-- Initialize Swiper -->
+<script>
+    var swiper1 = new Swiper(".myswiper1", {
+        loop: true,
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+    });
+
+    var swiper2 = new Swiper(".myswiper2", {
+        loop: true,
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+    });
+</script>
+{% endblock %}
+</body>
+
+</html>
