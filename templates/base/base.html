@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="/media/images/favicon.png">
+
+    <!-- tailwind css  -->
+    <link rel="stylesheet" href="/media/css/style.css">
+
+
+    {% block extra_links %}
+
+    <!-- extra links  -->
+
+    {% endblock %}
+
+
+    <!-- boxicons  -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+
+    <title>
+        {% block title %}
+        Shopeeze - say easy to shopping
+        {% endblock %}
+    </title>
+
+    <style>
+        #cat_drpdwn_list {
+            display: none;
+        }
+
+        #cat_drpdwn:hover #cat_drpdwn_list {
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="dark:bg-slate-300">
+    <header class="w-full shadow-md fixed z-50 bg-blue-500 dark:text-slate-200">
+        <nav class="flex px-5  xl:px-20 md:py-5 md:px-10 py-3 justify-between items-center">
+            <a href="/" title="Shopeeze" class="flex gap-2">
+                <img src="/media/images/s_logo.png" alt="" style="width: 45px;">
+                <img src="/media/images/shopeeze_logo_white.svg" alt="" class="md:w-32 lg:block hidden">
+            </a>
+
+            <div class="relative">
+                <input type="search" name="search" id="search" placeholder="Search here.."
+                    class="bg-transparent xl:w-96 lg:min-w-52 lg:max-w-[15rem] md:w-[10rem] h-8 w-32 border-b-2 outline-none pr-6 text-[12px] md:text-sm placeholder:text-slate-100 border-slate-200"
+                    style="color: #e2e8f0;">
+                <button class="text-xl absolute right-1 top-1 text-slate-200" type="submit" title="search"><i
+                        class='bx bx-search'></i></button>
+            </div>
+
+            <div class="flex items-center gap-2 transition duration-200 ease-in-out">
+                <div class="items-center gap-5 lg:gap-8 font-semibold text-slate-200 hidden md:flex md:mr-3">
+                    <a href="/" class="hover:text-[#ffea00] 
+                    {% block home_active %}
+                    {% endblock %}">
+                        Home
+                    </a>
+
+                    <div id="cat_drpdwn" class="relative h-10 flex items-center">
+                        <span class="flex justify-center items-center cursor-pointer">
+                            Categories
+                            <span class="text-xl pt-1.5">
+                                <i class='bx bx-chevron-down'></i>
+                            </span>
+                        </span>
+
+                        <div id="cat_drpdwn_list"
+                            class="absolute top-10 left-5 w-28 bg-white shadow-lg text-gray-500 rounded-md py-1 px-1 text-sm ">
+                            <div class="flex flex-col gap-2">
+                                {% for section in sections %}
+                                <div class="relative group w-32 bg-transparent">
+                                    <div
+                                        class="w-[6.5rem] flex items-center justify-between hover:text-blue-500 hover:bg-slate-200 rounded-md px-3 py-2 cursor-pointer hover:ring-1">
+                                        {{ section }}
+                                        <i class='bx bx-chevron-right'></i>
+                                    </div>
+                                    <div id="sec_drpdwn_list"
+                                        class="min-w-[10rem] bg-white absolute top-0 translate-x-28 rounded-md shadow-lg px-1 py-1 text-gray-500 hidden group-hover:block">
+                                        <div id="sec_drpdwn_" class="flex flex-col">
+                                            {% for category in categories %}
+                                            {% if category.section == section %}
+                                            <a href="#"
+                                                class="flex gap-x-4 items-center hover:text-blue-500 hover:bg-slate-200 rounded-md px-3 py-2 hover:ring-1">
+                                                <img src="{{ category.category_image.url }}"
+                                                    alt="{{ category.category_name }}"
+                                                    class="rounded-full w-10 h-10 object-cover ring-2 shadow-md">
+                                                <span>{{ category.category_name }}</span>
+                                            </a>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="/" class="hover:text-[#ffea00] 
+                    {% block support_active %}
+                    {% endblock %}">
+                        Support
+                    </a>
+                </div>
+
+
+                <a title="cart" href="#"
+                    class="text-center outline-none flex items-center justify-center text-slate-200 text-2xl focus:ring-sky-300 focus:ring-2 ease-in-out duration-200 md:mr-1 md:hover:text-[#ffea00] lg:w-20 gap-1 pr-0.5 lg:pr-0">
+                    <span class="text-sm font-semibold lg:block hidden">
+                        Cart
+                    </span>
+                    <i class='bx bx-cart'></i>
+                </a>
+                <a title="wishlist" href="#"
+                    class="text-center outline-none md:flex items-center justify-center text-slate-200 text-2xl focus:ring-sky-300 focus:ring-2 ease-in-out duration-200 md:mr-2 lg::hover:text-[#023047] lg:w-20 gap-1 pr-0.5 lg:pr-0 hidden md:hover:text-[#ffea00]">
+                    <span class="text-sm font-semibold lg:block hidden">
+                        Wishlist
+                    </span>
+                    <i class='bx bx-heart'></i>
+                </a>
+
+                <div class="relative group flex items-center justify-center h-10">
+                    {% if user.is_authenticated %}
+
+                    <button type="button" title="{{user.first_name}}"
+                        class="items-center justify-center gap-2 bg-white rounded-full w-8 xl:w-fit h-8 xl:px-1 cursor-pointer hidden md:flex">
+                        <img src="{{ user.profile.profile_image.url }}" alt="profile image"
+                            class="w-6 h-6 rounded-full shadow-sm ring-2">
+                        <span class="text-sm text-blue-500 pr-1 font-semibold hidden xl:block">
+                            {{ user.first_name}}
+                        </span>
+                    </button>
+
+                    <a href="#"
+                        class="profile flex items-center gap-2 bg-white rounded-full h-8 px-1 cursor-pointer md:hidden">
+                        <img src="{{ user.profile.profile_image.url }}" alt="profile image"
+                            class="w-6 h-6 rounded-full shadow-sm ring-2">
+                    </a>
+
+                    <div id="profile_menu"
+                        class="absolute top-10 right-0 text-sm w-36 font-semibold text-slate-700 bg-white shadow-lg rounded-md p-1 group-hover:block hidden">
+                        <div class="flex flex-col">
+                            <a href="#" class="flex items-center gap-3 py-1 px-3 hover:bg-slate-200 hover:text-blue-500 duration-200 ease-in-out transition rounded-md hover:ring-1">
+                                <span class="text-lg mt-1">
+                                    <i class='bx bxs-user-circle'></i>
+                                </span>
+                                My Profile
+                            </a>
+                            <a href="#" class="flex items-center gap-3 py-1 px-3 hover:bg-slate-200 hover:text-blue-500 duration-200 ease-in-out transition rounded-md hover:ring-1">
+                                <span class="text-lg mt-1">
+                                    <i class='bx bx-package'></i>
+                                </span>
+                                Orders
+                            </a>
+                            <a href="#" class="flex items-center gap-3 py-1 px-3 hover:bg-slate-200 hover:text-blue-500 duration-200 ease-in-out transition rounded-md hover:ring-1">
+                                <span class="text-lg mt-1">
+                                    <i class='bx bx-power-off'></i>
+                                </span>
+                                Log Out
+                            </a>
+                            
+                        </div>
+                    </div>
+
+                    {% else %}
+
+                    <a title="login" href="/accounts/login/"
+                        class="md:px-3 md:py-0.5 md:rounded md:border-2 md:border-slate-100 md:hover:bg-[#ffea00] md:bg-slate-100 md:text-blue-500 md:hover:text-blue-700 md:hover:border-[#ffea00] focus:ring-sky-300 focus:ring-2 ease-in-out duration-100 font-medium outline-none flex justify-center items-center md:hover:scale-105 md:shadow md:hover:shadow-md lg:py-1.5 lg:px-5">
+                        <span class="hidden md:block text-sm">
+                            Login
+                        </span>
+                        <span class="md:hidden ml-0.5 text-2xl text-slate-200">
+                            <i class="bx bx-user-plus"></i>
+                        </span>
+                    </a>
+
+                    {% endif %}
+                </div>
+                <button type="button" id="menuBtn" title="Menu"
+                    class="w-10 h-10 hover:bg-sky-500 text-center text-slate-200 text-3xl rounded focus:ring-2 focus:ring-sky-300 outline-none md:hidden">
+                    <i class='bx bx-menu'></i>
+                </button>
+
+            </div>
+
+        </nav>
+        <div id="menu_wrapper" class="bg-black bg-opacity-50 o w-full h-full fixed top-0 right-0 hidden order-1">
+            <div id="menu_list" class="md:hidden bg-white w-3/5 h-full absolute right-0 top-0 px-3 py-5">
+                <button type="reset" class="text-3xl" id="backBtn" title="Back">
+                    <i class='bx bx-arrow-back'></i>
+                </button>
+                <div class="px-5 mt-2 font-semibold flex flex-col gap-3">
+                    <a href="#" class="flex gap-2 items-center">
+                        <i class='bx bx-package'></i>
+                        Orders
+                    </a>
+                    <hr class="border-2 border-dashed">
+                    <a href="#" class="flex gap-2 items-center">
+                        <i class='bx bxs-heart'></i>
+                        Wishlist
+                    </a>
+                    <hr class="border-2 border-dashed">
+                    <a href="#" class="flex gap-2 items-center">
+                        <i class='bx bx-help-circle'></i>
+                        Help & Support
+                    </a>
+
+                    {% if user.is_authenticated %}
+                    <hr class="border-2 border-dashed">
+                    <a href="#" class="flex gap-2 items-center">
+                        <i class='bx bx-power-off'></i>
+                        Log Out
+                    </a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {% block main_content %}
+
+    <!-- main content -->
+
+    {% endblock %}
+
+    <footer class="bg-slate-200">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const menu_wrapper = document.getElementById('menu_wrapper');
+        const backBtn = document.getElementById('backBtn');
+
+        menuBtn.addEventListener('click', () => {
+            menu_wrapper.classList.remove('hidden');
+        });
+
+        backBtn.addEventListener('click', () => {
+            menu_wrapper.classList.add('hidden');
+        });
+    </script>
+</body>
+
+</html>

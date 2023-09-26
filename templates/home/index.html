@@ -1,0 +1,94 @@
+{% extends "base/base.html" %}
+
+{% block extra_links %}
+
+<!-- swiper  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+{% endblock %}
+
+
+{% block home_active %}text-[#ffea00]{% endblock %}
+
+
+{% block main_content %}
+    <section class="pt-16 md:pt-20">
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide "><img src="/media/images/slider1.jpg" alt=""
+                        class="w-full lg:h-[570px] object-cover md:h-[400px] h-[280px]"></div>
+                <div class="swiper-slide "><img src="/media/images/slider2.jpg" alt=""
+                        class="w-full lg:h-[570px] object-cover md:h-[400px] h-[280px]"></div>
+                <div class="swiper-slide "><img src="/media/images/slider3.png" alt=""
+                        class="w-full lg:h-[570px] object-cover md:h-[400px] h-[280px]"></div>
+                <div class="swiper-slide "><img src="/media/images/slider4.jpg" alt=""
+                        class="w-full lg:h-[570px] object-cover md:h-[400px] h-[280px]"></div>
+                <div class="swiper-slide "><img src="/media/images/slider5.jpg" alt=""
+                        class="w-full lg:h-[570px] object-cover md:h-[400px] h-[280px]"></div>
+
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+
+
+    <!-- component -->
+    <section class="flex justify-center items-center flex-wrap">
+        {% for product in products %}
+        <div
+            class="mx-auto mt-16 cursor-pointer w-52 transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 shadow-md duration-300 hover:scale-[1.03] hover:shadow-lg text-[#023047]">
+            <a href="{% url 'productview' product.slug %}">
+                <img class="h-44 w-full object-contain border rounded-t-lg dark:border-slate-800 dark:border-b-slate-200"
+                    src="/media/{{product.product_images.first.product_image}}" alt="Product Image" />
+                <div class="p-4">
+                    <h2 class="text-sm dark:text-white text-gray-500">{{product.brand}}</h2>
+                    <h2 class="mb-2 text-lg font-medium dark:text-white text-gray-900">{{product.product_name}}</h2>
+
+                    <div class="flex items-center">
+                        {% if product.discount_price %}
+                        <p class="mr-2 text-lg font-semibold text-gray-900 dark:text-white">
+                            &#8377;{{product.discount_price}}</p>
+                        <p class="text-sm  font-medium text-gray-500 line-through dark:text-gray-300">
+                            &#8377;{{product.actual_price}}</p>
+                        <p class="ml-auto text-base font-medium text-green-500 flex justify-center items-center gap-1">
+                            <i class='bx bxs-offer'></i> {{product.discount_percentage}}% off
+                        </p>
+
+                        {% else %}
+                        <p class="mr-2 text-lg font-semibold text-gray-900 dark:text-white">
+                            &#8377;{{product.actual_price}}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </section>
+
+
+
+    <!-- swiper js  -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+    <script>
+        var swiper = new Swiper(".mySwiper", {
+            spaceBetween: 30,
+            centeredSlides: true,
+            loop: true,
+            autoplay: {
+                delay: 2500,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+                dynamicBullets: true,
+            },
+        });
+    </script>
+
+    {% endblock %}
+
+</body>
+
+</html>
