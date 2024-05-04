@@ -1,0 +1,39 @@
+<div id="confirmationAlert"
+    class="fixed top-0 left-0 w-full h-[100vh] bg-black/50 z-[999]  justify-center items-center hidden">
+    <div class="bg-white rounded-lg h-36 px-8 py-8 flex flex-col justify-between">
+        <p class="text-sm leading-4 font-semibold text-justify">Do you really want to remove this address?
+        </p>
+        <div class="flex gap-4 justify-end">
+            <button type="reset" id="cancelBtn" onclick="hidePopUp()" class="text-blue-500 text-sm font-semibold">Cancel</button>
+            <button id="confirmBtn"
+                class="bg-blue-500 hover:bg-blue-500/90 text-white font-semibold px-4 py-1.5 rounded text-sm shadow">Remove</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const alertPopUp = document.getElementById('confirmationAlert');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
+
+    function showPopUp() {
+        alertPopUp.classList.remove('hidden');
+        alertPopUp.classList.add('flex');
+    }
+
+    function hidePopUp() {
+        alertPopUp.classList.remove('flex');
+        alertPopUp.classList.add('hidden');
+    }
+
+    function showConfirmPopUp(uid) {
+        showPopUp();
+
+        confirmBtn.addEventListener('click', ()=> {
+            hidePopUp();
+            window.location.href = `/account/profile/saved-addresses/remove-address/${uid}/`;
+        });
+    }
+
+
+</script>

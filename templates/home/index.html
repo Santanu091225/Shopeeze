@@ -1,0 +1,88 @@
+{% extends "base/base.html" %}
+
+
+{% block extralink %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<style>
+    .txt-truncate {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        /* Set the number of lines you want to show (e.g., 2) */
+        -webkit-line-clamp: 2;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block home_active %}text-blue-500 font-semibold{% endblock %}
+
+
+{% block main_content %}
+
+<main class="m-5">
+    <section class="flex flex-col gap-y-1">
+        <span class="font-bold">Newly Arrived:</span>
+
+        <div class="flex flex-col gap-y-1 px-5">
+            {% for section in sections %}
+            <div>
+                <span class="font-semibold text-xs">{{ section }}:</span>
+
+                <div class="swiper mySwiper -z-50" id="{{ section }}">
+                    <div class="swiper-wrapper px-4 py-2 items-center">
+
+                        {% for product in latest_products %}
+
+                        {% if product.category.section == section %}
+
+                        <div class="swiper-slide">{% include 'base/card.html' %}</div>
+                        
+                        {% endif %}
+
+                        {% endfor %}
+
+
+
+                        <div class="swiper-slide font-semibold text-blue-500">
+                            <a title="View all" href=""
+                                class="group ml-5 flex flex-col gap-y-2">
+                                <span class="flex items-center w-10 h-10 justify-center text-xl shadow rounded-full bg-white group-hover:shadow-lg group-hover:scale-[1.02] duration-300 ease-out">
+                                    <i class='bx bx-chevron-right'></i>
+                                </span>
+                                <span class="text-blue-500 w-20 text-xs group-hover:underline">view all</span>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            {% endfor %}
+        </div>
+
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+
+<script>
+
+    {% for section in sections %}
+
+    var swiper = new Swiper("#{{ section }}", {
+        slidesPerView: 8,
+        spaceBetween: 10,
+    });
+
+    {% endfor %}
+</script>
+
+{% endblock %}

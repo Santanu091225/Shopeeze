@@ -1,0 +1,24 @@
+<a title="{{ product.product_name }}" href="{% url 'productview' product.slug %}?color={{ product.product_images.first.color.color_name }}"
+    class="bg-white cursor-pointer flex flex-col w-[160px] text-slate-800 rounded-md shadow hover:shadow-md hover:scale-[1.02] transition text-xs">
+    <img src="/media/{{ product.product_images.first.product_image }}" alt="{{ product.product_name }}"
+        class="h-28 object-contain bg-slate-100 border border-b-white rounded-t-md">
+
+    <div class="flex flex-col px-4 py-2">
+            
+        <span class="text-[10px] font-semibold text-slate-500">{{ product.brand }}</span>
+        <p class="truncate -mt-0.5 font-semibold text-sm">{{ product.product_name }}</p>
+
+        <div id="price" class="flex items-center justify-between mt-3 mb-2">
+            <div class="flex gap-1.5 items-center text-sm font-semibold">
+                <span>&#8377;{{ product.discount_price }}</span>
+                <span class="line-through text-[10px] text-slate-500">&#8377;{{ product.actual_price }}</span>
+            </div>
+            <span class="flex items-center gap-0.5 text-green-600 text-[10px]">
+                <i class='bx bxs-offer text-xs'></i>
+                {{ product.discount_percentage }}% off
+            </span>
+        </div>
+
+    </div>
+
+</a>

@@ -1,0 +1,81 @@
+<section class="mx-10 py-10 px-12 bg-white space-y-5">
+    <p class="text-xl font-semibold">Please choose a delivery address:</p>
+
+    <form action="{% url 'make_payment' %}" method="post" class="grid gap-x-5 gap-y-2 grid-cols-2" id="chooseAddressForm">
+        {% csrf_token %}
+        {% for address in addresses %}
+        <label for="{{address.uid}}"
+        class=" flex items-center gap-5 border-2 rounded-md p-5 relative hover:bg-slate-100 address-container transition ease-in">
+        <input type="radio" name="address_uid" id="{{address.uid}}" class="w-5 h-5" value="{{address.uid}}" required>
+        <div class="flex flex-col gap-2">
+            <P class="font-semibold text-sm">{{address.receiver}}</P>
+            <p class="text-sm">
+                {{address.home}}, {{address.city}}, {{address.district}}, {{address.state}}, {{address.pincode}} 
+                {% if address.landmark %}
+                <br> Near {{address.landmark}}
+                {% endif %}
+                     <br> +91{{address.mobile}}
+            </p>
+        </div>
+        <div class="absolute right-5 top-2 flex gap-2 text-xl text-slate-500 transition-colors">
+            <a href="{% url 'edit_address_page_cart' address.uid %}">
+                <i class='bx bxs-edit'></i>
+            </a>
+            <a onclick="showConfirmPopUp('{{address.uid}}')">
+                <i class='bx bxs-trash'></i>
+            </a>
+        </div>
+    </label>
+
+        {% endfor %}
+        {% if addresses|length < 5 %}
+        <button type="button" onclick="hideForm()"
+            class="flex items-center justify-center text-gray-400 font-semibold gap-5 border-2 border-dashed rounded-md p-5 relative hover:bg-slate-100 transition ease-in">
+            <p>+ &nbsp; Add a new address</p>
+        </button>
+        {% endif %}
+    </form>
+    <button form="chooseAddressForm" type="submit"
+        class="mt-2 bg-blue-500 shadow font-semibold text-white rounded-md py-3 px-10 hover:bg-blue-500/90 transition-colors ease-in-out text-sm">
+        Deliver here
+    </button>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const defaultSelectedAddress = document.querySelector('.address-container input[checked]');
+        if (defaultSelectedAddress) {
+            const defaultSelectedContainer = defaultSelectedAddress.closest('.address-container');
+            defaultSelectedContainer.classList.add('bg-blue-500', 'text-white', 'hover:bg-blue-500/90');
+            defaultSelectedContainer.classList.remove('hover:bg-slate-100')
+            defaultSelectedContainer.querySelector('label p:last-child').classList.add('text-white');
+            defaultSelectedContainer.querySelectorAll('a').forEach(function (aTag) {
+                aTag.classList.add('text-white');
+            });
+        }
+    });
+
+    document.querySelectorAll('.address-container').forEach(function (el) {
+        el.addEventListener('click', function () {
+            document.querySelectorAll('.address-container').forEach(function (container) {
+                container.classList.remove('bg-blue-500', 'text-white', 'hover:bg-blue-500/90');
+                container.classList.add('hover:bg-slate-100');
+                container.querySelector('label p:last-child').classList.add('text-slate-800');
+                container.querySelector('label p:last-child').classList.remove('text-white');
+                container.querySelector('input[type="radio"]').removeAttribute('checked');
+                container.querySelectorAll('a').forEach(function (aTag) {
+                    aTag.classList.remove('text-white');
+                });
+            });
+
+            this.classList.remove('hover:bg-slate-100');
+            this.classList.add('bg-blue-500', 'text-white', 'hover:bg-blue-500/90');
+            this.querySelector('input[type="radio"]').setAttribute('checked', 'checked');
+            this.querySelector('label p:last-child').classList.add('text-white');
+            this.querySelectorAll('a').forEach(function (aTag) {
+                aTag.classList.add('text-white');
+            });
+        });
+    });
+
+</script>

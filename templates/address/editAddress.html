@@ -1,0 +1,73 @@
+{% extends 'base/base.html' %}
+
+
+
+{% block main_content %}
+
+    <main class="mx-5 my-5">
+    
+    <section class="mx-10 mt-5 bg-white p-10">
+        <p class="text-xl font-semibold">Update your delivery address:</p>
+        <form action="{% url 'edit_address_page_cart' address.uid %}" method="POST" id="addAdressForm"
+            class="text-sm font-semibold text-slate-500 grid grid-cols-2 gap-x-60 gap-y-4 mt-10">
+            {% csrf_token %}
+            <div class="flex justify-between">
+                <label for="updated_receiver">Receiver's name: <span class="text-red-500">*</span></label>
+                <input type="text" name="updated_receiver" id="name" value="{{address.receiver}}"
+                    class="text-slate-800 outline-blue-500 px-1 py-2 border-2 rounded-md w-72 font-normal" required>
+            </div>
+            <div class="flex justify-between">
+                <label for="updated_mobile">Contact no. : <span class="text-red-500">*</span></label>
+                <input type="tel" min="0" id="updated_mobile" name="updated_mobile" value="{{address.mobile}}"
+                    class="outline-blue-500 px-1 py-2 text-slate-800 border-2 rounded-md w-72 font-normal"
+                    required>
+            </div>
+    
+            <div class="flex justify-between">
+                <label for="updated_home">House no./Building no./Flat: <span class="text-red-500">*</span></label>
+                <input type="text" name="updated_home" id="home" value="{{address.home}}"
+                    class="outline-blue-500 px-1 py-2 text-slate-800 border-2 rounded-md w-72 font-normal" required>
+            </div>
+            <div class="flex justify-between">
+                <label for="updated_city">City/Village: <span class="text-red-500">*</span></label>
+                <input type="text" name="updated_city" id="city" value="{{address.city}}"
+                    class="text-slate-800 outline-blue-500 px-1 py-2 border-2 rounded-md w-72 font-normal" required>
+            </div>
+            <div class="flex justify-between">
+                <label for="updated_district">District: <span class="text-red-500">*</span></label>
+                <input type="text" name="updated_district" id="district" value="{{address.district}}"
+                    class="text-slate-800 outline-blue-500 px-1 py-2 border-2 rounded-md w-72 font-normal" required>
+            </div>
+    
+            <div class="flex justify-between">
+                <label for="updated_landmark">Landmark (optional) :</label>
+                <input type="text" id="landmark" name="updated_landmark" value="{{address.landmark}}"
+                    class="outline-blue-500 px-1 py-2 text-slate-800 border-2 rounded-md w-72 font-normal">
+            </div>
+    
+            <div class="flex justify-between">
+                <label for="updated_state">State: <span class="text-red-500">*</span></label>
+                <select name="updated_state" id="state" class="outline-blue-500 text-slate-800 px-1 py-2 border-2 rounded-md w-72 font-normal">
+                    {% for state, state_name in state_choices %}
+                    <option value="{{state}}" {% if address.state == state %}selected{% endif %}>{{state_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex justify-between">
+                <label for="updated_pincode">Pincode: <span class="text-red-500">*</span></label>
+                <input type="number" min="0" id="pincode" name="updated_pincode" value="{{address.pincode}}"
+                    class="outline-blue-500 px-1 py-2 text-slate-800 border-2 rounded-md w-72 font-normal"
+                    required>
+            </div>
+    
+        </form>
+    
+        <button form="addAdressForm" type="submit"
+            class="mt-5 bg-blue-500 shadow font-semibold text-white rounded-md py-3 px-10 hover:bg-blue-500/90 transition-colors ease-in-out text-sm">
+            Save Changes
+        </button>
+    
+    </section>
+    </main>
+{% endblock main_content %}
+    

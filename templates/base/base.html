@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/media/images/favicon.png" />
+    <link rel="stylesheet" href="/media/css/output.css" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+        rel="stylesheet">
+
+
+    {% block extralink %} {% endblock%}
+
+
+    <title>
+        {% block title %} Shopeeze - say easy to shopping {% endblock %}
+    </title>
+
+
+    <style>
+        #cat_drpdwn_list {
+            display: none;
+        }
+
+        #cat_drpdwn:hover #cat_drpdwn_list {
+            display: block;
+        }
+    </style>
+
+</head>
+
+<body class="relative bg-slate-200 font-['Lato']">
+    <header class="sticky top-0 w-full flex justify-around items-center bg-slate-50 px-8 shadow-md z-[999]">
+        <a id="logo" href="/">
+            <img src="/media/images/logo.png" alt="logo-s" class="h-9" />
+        </a>
+
+        <form class="flex items-center h-9">
+            <input type="text" placeholder="Search here.."
+                class="w-60 h-full rounded-s-full px-5 text-sm outline-none shadow-sm text-black bg-slate-200 font-[400]" />
+            <button title="Search" type="submit"
+                class="flex justify-center items-center px-4 text-2xl bg-sky-500 h-full shadow-sm rounded-e-full pt-0.5 text-gray-100"><i
+                    class='bx bx-search-alt'></i></button>
+        </form>
+
+        <div id="navigations" class="flex gap-8 h-16 items-center">
+            <a title="Home" href="{% url 'index' %}"
+                class="hover:text-blue-500 transition duration-300 {% block home_active %}{% endblock %}">Home</a>
+            <div id="cat_drpdwn" class="relative h-full flex items-center">
+                <div class="cursor-pointer flex items-center">
+                    Categories
+                    <span class="text-xl pt-1">
+                        <i class='bx bx-chevron-down'></i>
+                    </span>
+                </div>
+
+                <div id="cat_drpdwn_list"
+                    class="absolute top-12 left-2 w-28 bg-white shadow-lg text-gray-600 rounded-md py-1 px-1 text-sm ">
+                    <div class="flex flex-col gap-2">
+                        {% for section in sections %}
+                        <div class="relative group w-32 bg-transparent">
+                            <div
+                                class="w-[6.5rem] flex items-center justify-between hover:text-blue-500 hover:bg-slate-200 rounded-md px-3 py-2 cursor-pointer hover:ring-1">
+                                {{ section }}
+                                <i class='bx bx-chevron-right'></i>
+                            </div>
+                            <div id="sec_drpdwn_list"
+                                class="min-w-[10rem] bg-white absolute top-0 translate-x-28 rounded-md shadow-lg px-1 py-1 text-gray-500 hidden group-hover:block">
+                                <div id="sec_drpdwn_" class="flex flex-col">
+                                    {% for category in categories %}
+                                    {% if category.section == section %}
+                                    <a href="#"
+                                        class="flex gap-x-4 items-center hover:text-blue-500 hover:bg-slate-200 rounded-md px-3 py-1.5 hover:ring-1">
+                                        <img src="{{ category.category_image.url }}" alt="{{ category.category_name }}"
+                                            class="rounded-full w-8 h-8 object-cover ring-2 shadow-md border-2 border-white">
+                                        <span>{{ category.category_name }}</span>
+                                    </a>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+            <a title="Support" href="/support/" class="hover:text-blue-500 transition duration-300">Support</a>
+            <a title="Wishlisht" href="/accouts/wishlisht/"
+                class="text-2xl hover:text-blue-500 transition duration-300"><i class='bx bx-heart'></i></a>
+            <a title="Cart" href="{% url 'cart' %}" class="text-2xl group transition duration-300 relative">
+                <span class="group-hover:text-blue-500"><i class='bx bx-shopping-bag'></i></span>
+
+                {% if request.user.profile.get_cart_count > 0 %}
+                    <span class="absolute top-0 -right-2.5 flex justify-center items-center bg-rose-500 w-5 h-5 text-xs font-semibold text-white rounded-full">
+                        <span class="absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75 -z-10 animate-ping"></span>
+                        {{request.user.profile.get_cart_count}}
+                    </span>
+                {% endif %}
+
+            </a>
+
+
+            {% if user.is_authenticated %}
+            <div class="relative group h-full flex items-center">
+                <div class="cursor-pointer flex gap-2 items-center">
+                    <div class="relative">
+                        <img src="{{ user.profile.profile_image.url }}" alt="Profile Image"
+                            class="w-8 h-8 rounded-full object-cover ring-2 border-2 border-white">
+                        <span
+                            class="absolute bottom-0 -right-0.5 rounded-full w-2.5 h-2.5 bg-green-500 shadow mt-1"></span>
+                    </div>
+                    <span>{{ user.first_name }}</span>
+                </div>
+
+                <div id="profile_menu"
+                    class="absolute top-14 right-0 text-sm w-36 font-semibold text-slate-700 bg-white shadow-lg rounded-md p-1 group-hover:block hidden">
+                    <div class="flex flex-col">
+                        <a href="{% url 'edit_profile' %}"
+                            class="flex items-center gap-3 py-1 px-3 hover:bg-slate-200 hover:text-blue-500 duration-200 ease-in-out transition rounded-md hover:ring-1">
+                            <span class="text-lg mt-1">
+                                <i class='bx bxs-user-circle'></i>
+                            </span>
+                            My Profile
+                        </a>
+                        <a href="#"
+                            class="flex items-center gap-3 py-1 px-3 hover:bg-slate-200 hover:text-blue-500 duration-200 ease-in-out transition rounded-md hover:ring-1">
+                            <span class="text-lg mt-1">
+                                <i class='bx bx-package'></i>
+                            </span>
+                            Orders
+                        </a>
+                        <a href="{% url 'logout' %}"
+                            class="flex items-center gap-3 py-1 px-3 hover:bg-slate-200 hover:text-blue-500 duration-200 ease-in-out transition rounded-md hover:ring-1">
+                            <span class="text-lg mt-1">
+                                <i class='bx bx-power-off'></i>
+                            </span>
+                            Log Out
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+
+            <a title="Log In" href="{% url 'login' %}"
+                class="bg-sky-500 rounded shadow px-4 py-1 text-gray-100 font-semibold hover:bg-inherit hover:ring-2 hover:text-sky-500 hover:ring-sky-500 hover:shadow-md transition">
+                Log In
+            </a>
+
+            {% endif %}
+        </div>
+        {% include './popUp.html' %}
+    </header>
+
+    {% include './loading.html' %}
+    <!-- main content here -->
+    {% block main_content %}
+
+    {% endblock %}
+
+</body>
+
+<script>
+
+</script>
+
+</html>

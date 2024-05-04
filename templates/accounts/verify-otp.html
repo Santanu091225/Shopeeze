@@ -1,0 +1,116 @@
+{% extends './base.html' %}
+
+
+{% block links %}
+<style>
+    input::-webkit-inner-spin-button,
+    input::-webkit-outer-spin-button {
+        display: none;
+    }
+</style>
+{% endblock links %}
+
+
+{% block main %}
+<div
+    class="w-80 px-4 absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl flex flex-col items-center font-semibold py-10 gap-5">
+
+    <span class="text-xl select-none">Verify your mobile no</span>
+
+    <span class="text-xs select-none text-gray-600 font-normal">An OTP is send to your mobile no. &nbsp; +91*******{{masked_phone_number}}</span>
+
+    <form action="" id="loginOTPForm" method="POST" class="text-sm flex flex-col w-full px-10 gap-5">
+        {% csrf_token %}
+        <div class="">
+            {% include 'base/alert.html' %}
+        </div>
+
+        <div id="email-div" class="relative flex items-center gap-4 justify-center">
+            <input type="number" name="first_number" id="" autofocus
+                class="w-10 h-10 border-2 rounded-md text-center focus:outline-blue-400" min="0"
+                oninput="this.value = this.value.slice(0, 1);">
+            <input type="number" name="second_number" id="" disabled
+                class="w-10 h-10 border-2 rounded-md text-center focus:outline-blue-400" min="0"
+                oninput="this.value = this.value.slice(0, 1);">
+            <input type="number" name="third_number" id="" disabled
+                class="w-10 h-10 border-2 rounded-md text-center focus:outline-blue-400" min="0"
+                oninput="this.value = this.value.slice(0, 1);">
+            <input type="number" name="fourth_number" id="" disabled
+                class="w-10 h-10 border-2 rounded-md text-center focus:outline-blue-400" min="0"
+                oninput="this.value = this.value.slice(0, 1);">
+        </div>
+
+
+
+
+        <button type="submit" title="Verify"
+            class="py-2 rounded-md text-slate-100 bg-blue-500/50 shadow hover:bg-blue-500/90 pointer-events-none focus:outline-blue-500">Verify OTP</button>
+    </form>
+
+    <div class="text-xs">
+        <span>Didn't get the OTP? Try to </span>
+        <a href="{% url 'resend_otp' uid=profile.uid %}" class="hover:underline text-blue-500" aria-disabled="true">resend otp</a>.
+    </div>
+</div>
+
+<script>
+    const inputs = document.querySelectorAll("input"),
+        button = document.querySelector("button");
+
+    // iterate over all inputs
+    inputs.forEach((input, index1) => {
+
+
+        input.addEventListener("keyup", (e) => {
+            // This code gets the current input element and stores it in the currentInput variable
+            // This code gets the next sibling element of the current input element and stores it in the nextInput variable
+            // This code gets the previous sibling element of the current input element and stores it in the prevInput variable
+            const currentInput = input,
+                nextInput = input.nextElementSibling,
+                prevInput = input.previousElementSibling;
+
+
+            // if the next input is disabled and the current value is not empty
+            //  enable the next input and focus on it
+            if (nextInput && nextInput.hasAttribute("disabled") && currentInput.value !== "") {
+                nextInput.removeAttribute("disabled");
+                nextInput.focus();
+            }
+
+            // if the backspace key is pressed
+            if (e.key === "Backspace") {
+                // iterate over all inputs again
+                inputs.forEach((input, index2) => {
+                    // if the index1 of the current input is less than or equal to the index2 of the input in the outer loop
+                    // and the previous element exists, set the disabled attribute on the input and focus on the previous element
+                    if (index1 <= index2 && prevInput) {
+                        input.setAttribute("disabled", true);
+                        input.value = "";
+                        prevInput.focus();
+                    }
+                });
+            }
+            //if the fourth input( which index number is 3) is not empty and has not disable attribute then
+            //add active class if not then remove the active class.
+            if (!inputs[4].disabled && inputs[4].value !== "") {
+                button.classList.add("bg-blue-500");
+                button.classList.add("cursor-pointer");
+                button.classList.remove("bg-blue-500/50");
+                button.classList.remove("pointer-events-none");
+                return;
+            }
+            button.classList.remove("bg-blue-500");
+            button.classList.remove("cursor-pointer");
+            button.classList.add("bg-blue-500/50");
+            button.classList.add("pointer-events-none");
+
+            
+        });
+    });
+
+    //focus the first input which index is 0 on window load
+    // window.onload = function() {
+    //     document.getElementById("OTPForm").elements[0].focus();
+    // };
+</script>
+{% endblock main %}

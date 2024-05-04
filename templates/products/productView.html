@@ -1,0 +1,242 @@
+{% extends 'base/base.html' %}
+
+
+<!-- links -->
+{% block extralink %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<style>
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 30px;
+    height: 30px;
+  }
+
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    font-size: 10px;
+    font-weight: bold;
+  }
+
+  .thumbSwiper .swiper-slide-thumb-active {
+    opacity: 1;
+    transition: 200ms ease-in-out all;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  }
+
+  input[type="radio"]:checked + label {
+    font-weight: bold;
+    color: black;
+  }
+</style>
+
+{% endblock %}
+
+
+<!-- title -->
+{% block title %}
+
+{{product.product_name}} - {{request.GET.color}} | Shopeeze
+
+{% endblock %}
+
+
+
+{% block main_content %}
+
+<main class="p-5">
+  <div class="flex justify-center">
+    <div id="productDetails" class="flex flex-wrap justify-around gap-y-5 gap-x-16 p-10 rounded-xl bg-slate-100">
+
+      <div id="display-image" class="w-96">
+
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+            {% for image in productImages.all %}
+            <div class="swiper-slide">
+              <img src="/media/{{image.product_image}}" alt="" class="w-full h-80 object-contain bg-white rounded-md">
+            </div>
+            {% endfor %}
+          </div>
+          <div
+            class="swiper-button-next bg-slate-200 rounded-full shadow hover:shadow-md ease-out transition duration-300 hover:scale-[1.03]">
+          </div>
+          <div
+            class="swiper-button-prev bg-slate-200 rounded-full shadow hover:shadow-md ease-out transition duration-300 hover:scale-[1.03]">
+          </div>
+
+          <div class="swiper-pagination"></div>
+        </div>
+
+        <div thumbsSlider="" class="swiper thumbSwiper mt-4">
+          <div class="swiper-wrapper p-1">
+            {% for image in productImages.all %}
+            <div class="swiper-slide rounded hover:ring-1 opacity-40 hover:opacity-70">
+              <img src="/media/{{image.product_image}}" alt="" class="w-full h-16 object-contain bg-white rounded ">
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="max-w-2xl flex flex-col">
+        <p class="text-3xl font-bold">{{ product.product_name }}</p>
+        <p class="text-sm text-slate-500 -mt-1">
+          <span>by</span>
+          <a href="#" class="font-semibold hover:underline transition text-blue-500 cursor-pointer">{{ product.brand }}</a>.
+        </p>
+
+        <div id="price" class="my-5 flex gap-10">
+          <div class=" flex gap-3 items-center">
+            <p class="text-xl font-semibold">
+              &#8377;{{ product.discount_price }}
+            </p>
+            <p class="line-through text-slate-500 text-sm">
+              &#8377;{{ product.actual_price }}
+            </p>
+          </div>
+          <div class="flex gap-1 text-green-600 items-center text-sm font-semibold">
+            <i class='bx bxs-offer'></i>
+            {{ product.discount_percentage }}% off
+          </div>
+        </div>
+
+
+        <form action="{% url 'add_to_cart' product.uid %}" class="w-full h-full my-1 flex flex-col gap-8 justify-between">
+
+          <div class="w-full flex flex-col gap-2">
+            <div id="color" class="w-full flex justify-between font-semibold">
+              <span class="w-1/4">Color: </span>
+              <div class="w-full flex gap-5 text-slate-500 font-normal">
+                {% for color in color_variants %}
+                <div class="flex items-center">
+
+                  <input type="radio" name="color" value="{{ color }}" id="{{ color }}" required 
+                  {% if color == request.GET.color %}
+                    checked
+                  {% endif %}
+                  onchange="get_value_on_path('{{ color }}')"
+                     class="cursor-pointer">
+                  <label for="{{ color }}" class="cursor-pointer pl-1">{{ color }}</label>
+
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+
+              
+              
+            
+            <div id="size" class="w-full flex justify-between font-semibold">
+              <span class="w-1/4">Size: </span>
+              <div class="w-full flex gap-5 text-slate-500 font-normal">
+                {% for size in size_variants %}
+                <div class="flex items-center">
+
+                  <input type="radio" name="size" value="{{ size.size_name }}" id="{{ size.size_name }}" required 
+                  {% if size.size_name == request.GET.size %}
+                  checked
+                  {% endif %} 
+                  class="cursor-pointer">
+                  <label for="{{ size.size_name }}" class="cursor-pointer pl-1">{{ size.size_name }}</label>
+
+                </div>
+                {% endfor %}
+              </div>
+            </div>            
+            
+            <div id="category" class="w-full flex justify-between font-semibold">
+              <span class="w-1/4">Category: </span>
+              <div class="w-full text-slate-500 font-normal capitalize">
+                <span>{{ product.category }}</span>
+              </div>
+            </div>
+
+            <div id="Fabric" class="w-full flex justify-between font-semibold">
+              <span class="w-1/4">Fabric: </span>
+              <div class="w-full text-slate-500 font-normal capitalize">
+                <span>{{ product.fabric }}</span>
+              </div>
+            </div>
+
+            <div id="Description" class="w-full flex justify-between items-center font-semibold">
+              <span class="w-1/4">Description: </span>
+              <div class="w-full text-slate-500 font-normal text-sm text-justify leading-4">
+                <span>{{product.product_description}}</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="w-[32rem] flex gap-4">
+            <button type="submit"
+              class="w-full bg-sky-500 rounded shadow py-3.5 uppercase text-slate-100 font-semibold hover:bg-sky-500/80 hover:shadow-md transition duration-300 ease-in-out flex gap-2 items-center justify-center">
+              <i class='bx bxs-shopping-bag'></i>
+              Add to bag
+            </button>
+            <button type="button"
+              class="w-full rounded shadow py-3.5 uppercase font-semibold bg-white ring-2 text-sky-500 hover:ring-sky-500 hover:shadow-md hover:bg-white/60 transition duration-300 ease-in-out flex gap-2 items-center justify-center">
+              <i class='bx bx-heart'></i>
+              Wishlist
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  var thumbSwiper = new Swiper(".thumbSwiper", {
+    spaceBetween: 10,
+    slidesPerView: 4,
+    freeMode: true,
+    watchSlidesProgress: true,
+  });
+
+  var swiper2 = new Swiper(".mySwiper", {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    loop: true,
+
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+    },
+
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+
+    thumbs: {
+      swiper: thumbSwiper,
+    },
+  });
+
+  function get_value_on_path(color){
+    let currentUrl = window.location.href;
+    let newUrl = currentUrl.replace(/color=[^&]+/, 'color=' + color)
+
+    window.location.href = newUrl;
+  }
+</script>
+
+{% endblock %}

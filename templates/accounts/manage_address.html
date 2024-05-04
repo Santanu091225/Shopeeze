@@ -1,0 +1,87 @@
+{% extends 'base/base.html' %}
+
+
+{% block extralink %}
+
+{% endblock extralink %}
+
+
+{% block main_content %}
+<main class="p-10 h-[90vh]">
+    <section class="bg-white rounded-lg flex overflow-hidden h-full">
+        <div class="w-80 border-r-2 text-sm font-semibold">
+            <a href="{% url 'edit_profile' %}"
+                class="text-gray-800 flex py-2.5 gap-2 items-center px-10 border-b-2 hover:bg-slate-200/50 transition">
+                <i class='bx bxs-user-detail text-xl pt-1'></i>
+                <p>Edit Profile</p>
+            </a>
+
+            <a href="{% url 'saved_addresses' %}"
+                class="bg-blue-400 text-white flex py-2.5 gap-2 items-center px-10 border-b-2 hover:bg-opacity-90 transition">
+                <i class='bx bxs-pin text-xl pt-1'></i>
+                <p>Saved Addresses</p>
+            </a>
+
+            <a href="#"
+                class="text-gray-800 flex py-2.5 gap-2 items-center px-10 border-b-2 hover:bg-slate-200/50 transition">
+                <i class='bx bxs-cog text-xl pt-1'></i>
+                <p>Manage Account</p>
+            </a>
+        </div>
+
+        <div class="p-10 w-full h-full">
+            <div class="grid grid-cols-2 relative gap-x-5 gap-y-4" id="addresses">
+
+                {% for address in addresses %}
+                <div class="border-2 rounded-md p-5 relative hover:bg-slate-100 transition ease-in">
+
+                    <div class="flex flex-col gap-2">
+                        <P class="font-semibold text-sm">{{address.receiver}}</P>
+                        <p class="text-sm">
+                            {{address.home}}, {{address.city}}, {{address.district}}, {{address.state}},
+                            {{address.pincode}}
+                            {% if address.landmark %}
+                            <br> Near {{address.landmark}}
+                            {% endif %}
+                            <br> +91{{address.mobile}}
+                        </p>
+                    </div>
+
+                    <div class="absolute top-4 right-4 flex gap-2 text-gray-500 text-xl">
+                        <a title="edit" href="{% url 'edit_address' address.uid %}">
+                            <i class='bx bxs-edit'></i>
+                        </a>
+                        <button title="remove" type="button" onclick="showConfirmPopUp('{{address.uid}}')">
+                            <i class='bx bxs-trash'></i>
+                        </button>
+                    </div>
+                    
+                </div>
+
+
+                {% endfor %}
+
+                {% if addresses|length < 5 %} 
+                <a href="{% url 'add_address_profile' %}"
+                    class="flex items-center justify-center text-gray-400 font-semibold gap-5 border-2 border-dashed rounded-md p-5 relative hover:bg-slate-100 transition ease-in">
+                    <p>+ &nbsp; Add a new address</p>
+                </a>
+                {% endif %}
+
+
+
+
+
+
+
+            </div>
+
+            
+        </div>
+    </section>
+</main>
+
+{% include 'address/confirmation.html' %}
+
+
+{% endblock main_content %}

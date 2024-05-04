@@ -1,0 +1,35 @@
+{% if messages %}
+
+{% for message in messages %}
+
+<div id="popUp"
+    class="fixed top-20 text-white rounded-md flex items-center gap-2 px-4 py-2 animate-bounce
+    {% if message.tags == 'success' %} bg-green-500 {% else %} bg-rose-400 {% endif %}
+    ">
+    <span class="mt-px">
+        {% if message.tags == 'success' %}
+            <i class='bx bxs-check-circle bx-tada'></i>
+        {% else %}
+            <i class='bx bxs-info-circle bx-tada' ></i>
+        {% endif %}
+    </span>
+    <span class="text-sm font-semibold">{{ message }}</span>
+</div>
+
+<script>
+
+    const popup = document.getElementById('popUp');
+
+    setTimeout(() => {
+        popup.classList.remove('animate-bounce');
+
+        setTimeout(() => {
+            popup.remove();
+        }, 0);
+    }, 2500);
+
+</script>
+
+{% endfor %}
+
+{% endif %}

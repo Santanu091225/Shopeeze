@@ -1,0 +1,118 @@
+{% extends 'base/base.html' %}
+
+
+{% block extralink %}
+<style>
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        display: none !important;
+    }
+</style>
+{% endblock extralink %}
+
+
+{% block main_content %}
+<main class="p-10 h-[90vh]">
+    <section class="bg-white rounded-lg flex overflow-hidden h-full">
+        <div class="w-80 border-r-2 text-sm font-semibold">
+            <a href="{% url 'edit_profile' %}"
+                class="text-gray-800 flex py-2.5 gap-2 items-center px-10 border-b-2 hover:bg-slate-200/50 transition">
+                <i class='bx bxs-user-detail text-xl pt-1'></i>
+                <p>Edit Profile</p>
+            </a>
+
+            <a href="{% url 'saved_addresses' %}"
+                class="bg-blue-400 text-white flex py-2.5 gap-2 items-center px-10 border-b-2 hover:bg-opacity-90 transition">
+                <i class='bx bxs-pin text-xl pt-1'></i>
+                <p>Saved Addresses</p>
+            </a>
+
+            <a href="#"
+                class="text-gray-800 flex py-2.5 gap-2 items-center px-10 border-b-2 hover:bg-slate-200/50 transition">
+                <i class='bx bxs-cog text-xl pt-1'></i>
+                <p>Manage Account</p>
+            </a>
+        </div>
+
+        <div class="p-10 w-full h-full">
+            <div>
+                <a href="{% url 'saved_addresses' %}" class="text-blue-500 font-semibold group text-xs flex items-center gap-1">
+                    <i class='bx bx-arrow-back mt-px'></i>
+                    <span class="group-hover:underline">Go Back</span>
+                </a>
+            </div>
+
+
+
+
+            <form action="{% url 'edit_address' address.uid %}" method="post"
+                class="text-sm font-semibold text-slate-500 grid grid-cols-2 gap-x-20 gap-y-4 mt-10"
+                id="editAddressForm">
+                {% csrf_token %}
+                <div class="flex justify-between items-center">
+                    <label for="updated_receiver">Receiver's name: <span class="text-red-500">*</span></label>
+                    <input title="receiver" type="text" name="updated_receiver" id="name" value="{{address.receiver}}"
+                        class="text-slate-800 outline-blue-500 px-1 py-2 border-2 rounded-md w-72 font-normal" required>
+                </div>
+                <div class="flex justify-between items-center">
+                    <label for="updated_mobile">Contact no. : <span class="text-red-500">*</span></label>
+                    +91<input type="tel" min="0" id="updated_mobile" name="updated_mobile" value="{{address.mobile}}"
+                        class="outline-blue-500 px-1 py-2 text-slate-800 border-2 rounded-md w-72 font-normal" required>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <label for="updated_home">House no./Building no./Flat: <span class="text-red-500">*</span></label>
+                    <input title="home" type="text" name="updated_home" id="home" value="{{address.home}}"
+                        class="outline-blue-500 px-1 py-2 text-slate-800 border-2 rounded-md w-72 font-normal" required>
+                </div>
+                <div class="flex justify-between items-center">
+                    <label for="updated_city">City/Village: <span class="text-red-500">*</span></label>
+                    <input type="text" name="updated_city" id="city" value="{{address.city}}"
+                        class="text-slate-800 outline-blue-500 px-1 py-2 border-2 rounded-md w-72 font-normal" required>
+                </div>
+                <div class="flex justify-between items-center">
+                    <label for="updated_district">District: <span class="text-red-500">*</span></label>
+                    <input type="text" name="updated_district" id="district" value="{{address.district}}"
+                        class="text-slate-800 outline-blue-500 px-1 py-2 border-2 rounded-md w-72 font-normal" required>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <label for="updated_landmark">Landmark (optional) :</label>
+                    <input type="text" id="landmark" name="updated_landmark" value="{{address.landmark}}"
+                        class="outline-blue-500 px-1 py-2 text-slate-800 border-2 rounded-md w-72 font-normal">
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <label for="updated_state">State: <span class="text-red-500">*</span></label>
+                    <select name="updated_state" id="state"
+                        class="outline-blue-500 text-slate-800 px-1 py-2 border-2 rounded-md w-72 font-normal">
+                        {% for state, state_name in state_choices %}
+                        <option value="{{state}}" {% if address.state == state %}selected{% endif %}>
+                            {{state_name}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex justify-between items-center">
+                    <label for="updated_pincode">Pincode: <span class="text-red-500">*</span></label>
+                    <input type="number" min="0" id="pincode" name="updated_pincode" value="{{address.pincode}}"
+                        class="outline-blue-500 px-1 py-2 text-slate-800 border-2 rounded-md w-72 font-normal" required>
+                </div>
+            </form>
+
+
+            <div class="flex justify-center mt-5">
+
+           
+            <button form="editAddressForm" type="submit"
+                class="mt-5 bg-blue-500 shadow font-semibold text-white rounded-md py-3 px-10 hover:bg-blue-500/90 transition-colors ease-in-out text-sm">
+                Save Changes
+            </button>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+
+{% endblock main_content %}

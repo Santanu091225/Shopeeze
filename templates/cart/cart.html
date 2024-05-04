@@ -1,0 +1,64 @@
+{% extends 'base/base.html' %}
+
+{% block main_content %}
+<main class="mx-5">
+    <section class="h-full my-5 w-full relative flex flex-col gap-5">
+
+
+        {% if request.user.profile.get_cart_count == 0 %}
+
+        <div class="w-full h-full flex justify-center items-center mt-28">
+            <img src="/media/images/empty_cart.gif" alt="empty cart" class="rounded-full h-48">
+        </div>
+
+        <div class="w-full h-full flex flex-col justify-center items-center gap-2">
+            <p class="font-semibold text-lg">Oho! Your bag is empty now.</p>
+            <a href="{% url 'index' %}"
+                class="px-4 py-1.5 rounded-md hover:ring-2 hover:text-blue-400 hover:bg-inherit hover:shadow-xl text-white font-semibold bg-blue-400 shadow-md transition ease-in-out duration-200">Shop
+                now</a>
+        </div>
+
+
+        {% else %}
+
+        <h1 class="text-center font-bold space-y-5 text-2xl mt-2">Cart Items</h1>
+        <div class="flex justify-between mx-10 mt-5 gap-10">
+            <div class="grid grid-cols-2 gap-5 w-full">
+
+                {% for cart_item in cart_items %}
+                {% include './cartItem.html' %}
+                {% endfor %}
+
+            </div>
+            <form method="post" action="{% url 'address' %}" class="bg-white w-96 p-5 h-fit rounded-lg shadow flex flex-col gap-2 justify-between sticky top-20">
+                {% csrf_token %}
+                <div class="space-y-1">
+                    
+                    
+                    {% if total_price < 1000 %}
+                    <p class="flex justify-between text-slate-500">Subtotal: <span>&#8377;{{subtotal}}</span></p>
+                    <p class="flex justify-between text-slate-500">
+                        Shipping: <span>&#8377;50</span>
+                    </p>
+                    {% else %}
+                    <p class="flex justify-between text-slate-500">Subtotal: <span>&#8377;{{total_price}}</span></p>
+                    <p class="flex justify-between text-slate-500">
+                        Shipping: <span class="flex gap-2 items-center"><span class="line-through text-sm">&#8377;50</span>&#8377;0</span>
+                    </p>
+                    {% endif %}
+                        
+                </div>
+                <hr class="border-1 border-slate-600 border-dotted mt-2">
+                <p class="font-semibold flex justify-between">Total: <span>&#8377;{% if new_total_price %}{{new_total_price}} {% else %} {{total_price}}{% endif %}</span></p>
+                <p class="flex justify-end text-xs -mt-1 text-slate-500">inculding GST</p>
+                <button type="submit"
+                    class="mt-2 bg-blue-500 shadow font-semibold text-white rounded-md py-1.5 hover:bg-blue-500/90 transition-colors ease-in-out">
+                    Check out
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </section>
+    {% include './confirmation.html' %}
+</main>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends './base.html' %}
+
+
+{% block links %}
+<style>
+    input:focus-within + label:last-child{
+        color: blue;
+    }
+</style>
+{% endblock links %}
+    
+
+{% block main %}
+<div
+    class="w-80 absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl flex flex-col items-center font-semibold py-10 gap-5">
+    <span class="text-xl select-none">Log in to Your Account</span>
+
+    <form action="{% url 'login_Pass' %}" id="loginPasswordForm" method="POST" class="hidden text-sm flex-col w-full px-10 gap-5 mt-3">
+        {% csrf_token %}
+        {% include 'base/alert.html' %}
+
+        <div id="phone-div" class="relative flex items-center gap-4">
+            <label for="phone_number" class="pt-0.5">+91</label>
+            <input id="phone_number" required placeholder="Phone no." name="phone_number" type="tel"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"
+                class=" w-full font-normal border-b-2 border-slate-800 outline-none focus:border-b-blue-400 py-1 pr-8">
+            <label for="phone_number" class="absolute right-0 text-lg">
+                <i class='bx bxs-phone'></i>
+            </label>
+        </div>
+
+
+        <div id="password-div" class="relative">
+            <input id="password" name="password" autocomplete="current-password" required placeholder="Enter password"
+                type="password"
+                class="w-full font-normal border-b-2 border-slate-800 outline-none focus:border-b-blue-400 py-1 pr-8 transition duration-300">
+            <label for="password" class="absolute right-0 text-lg focus:text-blue-500 transition duration-300">
+                <i class='bx bx-key'></i>
+            </label>
+        </div>
+
+        <button type="submit" title="sign up"
+            class="py-2 rounded-md text-slate-100 bg-blue-500 shadow hover:bg-blue-500/90">Log in</button>
+
+    </form>
+
+
+
+
+    <form action="{% url 'login_OTP' %}" id="loginOTPForm" method="POST" class="text-sm flex flex-col w-full px-10 gap-5 mt-3">
+        {% csrf_token %}
+        {% include 'base/alert.html' %}
+
+        <div id="email-div" class="relative flex items-center gap-4">
+            <label for="phone_number" class="pt-0.5">+91</label>
+            <input id="phone_number" required placeholder="Phone no." name="phone_number" type="tel"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"
+                class=" w-full font-normal border-b-2 border-slate-800 outline-none focus:border-b-blue-400 py-1 pr-8">
+            <label for="phone_number" class="absolute right-0 text-lg">
+                <i class='bx bxs-phone'></i>
+            </label>
+        </div>
+
+
+
+
+        <button type="submit" title="sign up"
+            class="py-2 rounded-md text-slate-100 bg-blue-500 shadow hover:bg-blue-500/90">Send OTP</button>
+    </form>
+
+    <div id="loginOTP_div" class="text-xs hidden">
+        <span>Don't remember your password?</span>
+        <button id="loginOTP" type="button" class="hover:underline text-blue-500"> login using OTP</button>
+    </div>
+    <div id="loginPass_div" class="text-xs">
+        <span>Having trouble with OTP?</span>
+        <button id="loginPass" type="button" class="hover:underline text-blue-500"> login with password</button>
+    </div>
+
+    <hr class="border border-slate-600 border-dashed w-1/2">
+    <div class="text-xs">
+        <span>Don't have a account?</span>
+        <a href="/accounts/sign-up/" class="hover:underline text-blue-500">Create account</a>
+    </div>
+</div>
+
+
+<script>
+    const loginOTPForm = document.getElementById('loginOTPForm'),
+        loginPasswordForm = document.getElementById('loginPasswordForm'),
+        loginOTP_btn = document.getElementById('loginOTP'),
+        loginPass_btn = document.getElementById('loginPass'),
+        loginOTP_div = document.getElementById('loginOTP_div'),
+        loginPass_div = document.getElementById('loginPass_div');
+
+    loginPass_btn.addEventListener('click', () => {
+        loginPasswordForm.classList.remove('hidden');
+        loginPasswordForm.classList.add('flex');
+        loginOTPForm.classList.add('hidden');
+        loginOTPForm.classList.remove('flex');
+        loginOTP_div.classList.remove('hidden');
+        loginPass_div.classList.add('hidden');
+    });
+
+    loginOTP_btn.addEventListener('click', () => {
+        loginOTPForm.classList.remove('hidden');
+        loginOTPForm.classList.add('flex');
+        loginPasswordForm.classList.remove('flex');
+        loginPasswordForm.classList.add('hidden');
+        loginPass_div.classList.remove('hidden');
+        loginOTP_div.classList.add('hidden');
+    });
+
+</script>
+{% endblock main %}

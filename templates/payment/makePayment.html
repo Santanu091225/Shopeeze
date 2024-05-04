@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+
+
+{% block main_content %}
+<button id="rzp-button1" type="button"
+    class="mt-2 bg-blue-500 shadow font-semibold text-white rounded-md py-2 px-10 hover:bg-blue-500/90 transition-colors ease-in-out">
+    Pay now
+</button>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    var options = {
+        "key": "rzp_test_7Bub5NKbrTVhmm", // Enter the Key ID generated from the Dashboard
+        "amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "Shopeeze", //your business name
+        "description": "Test Transaction",
+        "image": "/media/images/favicon.png",
+        "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "callback_url": "http://127.0.0.1:8000/accounts/cart/make-payment/payment-capture/",
+        "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
+            "name": "{{request.user.first_name}} {{request.user.last_name}}", //your customer's name
+            "email": "{{request.user.email}}", //your customer's email 
+            "contact": "+917872110997" //Provide the customer's phone number for better conversion rates 
+        },
+
+        "theme": {
+            "color": "#3B82F6"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    document.getElementById('rzp-button1').onclick = function (e) {
+        rzp1.open();
+        e.preventDefault();
+    }
+</script>
+{% endblock %}
